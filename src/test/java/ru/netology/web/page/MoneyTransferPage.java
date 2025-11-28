@@ -4,12 +4,15 @@ package ru.netology.web.page;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.selector.ByText;
+import com.codeborne.selenide.selector.WithText;
 import org.openqa.selenium.By;
 import ru.netology.web.data.DataHelper;
 
+import java.time.Duration;
 import java.util.concurrent.TransferQueue;
 
 import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 
 public class MoneyTransferPage {
@@ -17,6 +20,8 @@ public class MoneyTransferPage {
     private final SelenideElement fromField = $("[data-test-id='from'] input");
     private final SelenideElement topUpBalanceButton = $("[data-test-id='action-transfer']");
     private final SelenideElement transferPageVisibility = $(byText("Пополнение карты"));
+    private final SelenideElement errorMessage =
+            $("data-test-id='error-notification' .notification__content");
 
     public MoneyTransferPage () {
         transferPageVisibility.shouldBe(Condition.visible);
@@ -27,5 +32,9 @@ public class MoneyTransferPage {
         fromField.setValue(cardInfo.getNumberOfCard());
         topUpBalanceButton.click();
         return new DashboardPage();
+    }
+
+    public void checkErrorMessage (String expectedText) {
+        errorMessage.should(Condition.visible, Duration.ofSeconds(5)).should(Condition.text(expectedText));
     }
 }
